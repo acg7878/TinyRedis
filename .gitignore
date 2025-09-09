@@ -1,0 +1,6 @@
+build
+.cache
+docs
+redis
+
+.DS_Store
