@@ -1,11 +1,12 @@
-#ifndef SOCKET_H
-#define SOCKET_H
+#ifndef BASE_SOCKET_SOCKET_H
+#define BASE_SOCKET_SOCKET_H
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/_endian.h>
 #include <sys/_types/_socklen_t.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <atomic>
 #include <cstddef>
 #include <cstdint>
@@ -134,6 +135,10 @@ class Socket : public std::enable_shared_from_this<Socket> {
   virtual bool OnDisconnect();
 
   static void closeSocket(int& sock);
+  static int createUDPSocket();
+  static int createTCPSocket();
+  static void setNonBlock(int sock,bool nonblock);
+  static void setNodelay(int sock);
 
   enum SocketType {
     SocketType_Invalid = -1,
