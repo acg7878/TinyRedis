@@ -11,7 +11,7 @@ class ClientSocket : public Socket {
   bool Connect(const SocketAddr& addr);
   bool OnWritable();
   bool OnError();
-  SocketType getSockType() const { return SocketType_Client; }
+  SocketType getSockType() const { return SocketType::client; }
 
   void setFailCallback(const std::function<void()>& cb) { onConnectFail_ = cb; }
 

@@ -13,7 +13,7 @@ class ListenSocket : public Socket {
   explicit ListenSocket(int tag);
   ~ListenSocket();
 
-  SocketType getSocketType() const { return SocketType_Listen; }
+  SocketType getSocketType() const { return SocketType::listen; }
 
   bool Bind(const SocketAddr& addr);
   bool OnReadable();

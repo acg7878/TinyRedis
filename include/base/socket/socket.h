@@ -140,14 +140,14 @@ class Socket : public std::enable_shared_from_this<Socket> {
   static void setNonBlock(int sock,bool nonblock);
   static void setNodelay(int sock);
 
-  enum SocketType {
-    SocketType_Invalid = -1,
-    SocketType_Listen,  // 监听套接字（服务器端）
-    SocketType_Client,  // 客户端套接字
-    SocketType_Stream   // 流式套接字（如TCP）
+  enum class SocketType {
+    invalid,
+    listen,  // 监听套接字（服务器端）
+    client,  // 客户端套接字
+    stream   // 流式套接字（如TCP）
   };
 
-  virtual SocketType getSocketType() const { return SocketType_Invalid; }
+  virtual SocketType getSocketType() const { return SocketType::invalid; }
   bool invalid() const { return invalid_; }
   int getSocket() const { return localSock_; }
 
