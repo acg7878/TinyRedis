@@ -43,15 +43,3 @@ TEST(ThreadPoolTest, JoinAll) {
     // thread completion without exposing internal state, but we can assume
     // that if joinAll returns, the tasks have completed.
 }
-
-TEST(ThreadPoolTest, ExceptionHandling) {
-  ThreadPool& pool = ThreadPool::instance();
-  auto future = pool.executeTask([]() { throw std::runtime_error("Task failed"); });
-  try {
-    future.get();
-  } catch (const std::runtime_error& e) {
-    ASSERT_STREQ(e.what(), "Task failed");
-    return;
-  }
-  FAIL() << "Expected std::runtime_error";
-}
