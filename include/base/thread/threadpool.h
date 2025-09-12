@@ -56,6 +56,10 @@ class ThreadPool final {
   static const int kMaxThreads = 256; // 线程池允许的最大线程数量
 };
 
+// 关闭弃用警告
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 template <typename F, typename... Args>
 auto ThreadPool::executeTask(F&& f, Args&&... args)
     -> std::future<typename std::result_of<F(Args...)>::type> {
@@ -78,4 +82,6 @@ auto ThreadPool::executeTask(F&& f, Args&&... args)
   }
   return task->get_future();
 }
+#pragma clang diagnostic pop
+
 #endif

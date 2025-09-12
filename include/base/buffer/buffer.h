@@ -6,6 +6,7 @@
 #include <cassert>
 #include <cstddef>
 
+// 封装的iovec
 struct BufferSequence {
   static const std::size_t kMaxIovec = 16;
   iovec buffers[kMaxIovec];
@@ -49,7 +50,7 @@ class CircularBuffer {
   // maxSize_是2的n次方，如8，那8-1为7（111）
   bool isFull() const {return ((writePos_+1)&(maxSize_-1)) == readPos_;}
 
-  
+
  protected:
   std::size_t maxSize_;
 
