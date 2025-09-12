@@ -1,0 +1,17 @@
+add_subdirectory(googletest)
+
+add_executable(TinyRedisTest
+    ${CMAKE_SOURCE_DIR}/src/base/thread/threadpool.cpp
+    base/thread/threadpool_test.cpp
+)
+
+target_include_directories(TinyRedisTest
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include
+)
+
+# 链接gtest_main，生成main函数
+target_link_libraries(TinyRedisTest
+    PRIVATE
+    gtest_main
+)

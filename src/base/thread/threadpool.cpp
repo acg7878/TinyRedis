@@ -1,7 +1,10 @@
 #include <base/thread/threadpool.h>
+#include <algorithm>
 #include <chrono>
+#include <functional>
 #include <mutex>
 #include <thread>
+#include <spdlog/spdlog.h>
 
 thread_local bool ThreadPool::working_ = true;
 
@@ -14,6 +17,49 @@ ThreadPool::ThreadPool() : waiters_(0), shutdown_(false) {
 
 ThreadPool::~ThreadPool() {
   joinAll();
+}
+
+ThreadPool& ThreadPool::instance() {
+  static ThreadPool pool;
+  return pool;
+}
+
+void ThreadPool::setMaxIdleThread(unsigned int m) {
+  if (0 < m && m < kMaxThreads)
+    maxIdleThread_ = m;
+}
+
+void ThreadPool::_createWorker() {
+  std::thread t([this]() { this->_workerRoutine(); });
+  worker_.push_back(std::move(t));
+}
+
+void ThreadPool::_workerRoutine() {
+  working_ = true;
+  while (working_) {
+    std::function<void()> task;
+    {
+      std::unique_lock<std::mutex> guard(mutex_);
+      ++waiters_;
+      cond_.wait(guard, [this]() -> bool {
+        return this->shutdown_ || !tasks_.empty();
+      });
+      --waiters_;
+
+      if (this->shutdown_ && tasks_.empty()) {
+        return;
+      }
+
+      task = std::move(tasks_.front());
+      tasks_.pop_front();
+    }
+    try {
+      task();
+    } catch (const std::exception& e) {
+      spdlog::error("Task threw an exception: {}", e.what());
+    }
+  }
+  --pendingStopSignal_;  // 循环终止，通知 monitor线程：我已经停了
 }
 
 void ThreadPool::_monitorRoutine() {
@@ -64,3 +110,4 @@ void ThreadPool::joinAll() {
     monitor_.join();
   }
 }
+

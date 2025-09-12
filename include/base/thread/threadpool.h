@@ -53,7 +53,7 @@ class ThreadPool final {
   bool shutdown_;
   std::deque<std::function<void()>> tasks_;
 
-  static const int kMaxThreads = 256;
+  static const int kMaxThreads = 256; // 线程池允许的最大线程数量
 };
 
 template <typename F, typename... Args>
