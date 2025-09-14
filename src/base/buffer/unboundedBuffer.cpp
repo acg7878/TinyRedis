@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstring>
 #include <limits>
+#include <utility>
 
 namespace tinyredis {
 const std::size_t UnboundedBuffer::MAX_BUFFER_SIZE =
@@ -54,11 +55,17 @@ std::size_t UnboundedBuffer::peekDataAt(void* pBuf, std::size_t nSize,
 
 std::size_t UnboundedBuffer::peekData(void* pBuf, std::size_t nSize) {
   std::size_t nBytes = peekDataAt(pBuf, nSize);
-  
+
   // 将读过的数据标记为无效
   adjustReadPtr(nBytes);  // readPos_ += nBytes;
-  
+
   return nBytes;
+}
+
+void UnboundedBuffer::swap(UnboundedBuffer& other) {
+  buffer_.swap(other.buffer_);
+  std::swap(readPos_, other.readPos_);
+  std::swap(writePos_, other.writePos_);
 }
 
 void UnboundedBuffer::_AssureSpace(std::size_t nSize) {
